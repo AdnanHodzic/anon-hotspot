@@ -140,11 +140,12 @@ echo -e "\nConfiguring hostapd\n"
 hostapd_conf="/etc/hostapd/hostapd.conf"
 hostapd_conf_bak="/etc/hostapd/hostapd.conf.org.bak"
 
-if [ -f $hostapdf ];
+if [ -f $hostapd_conf ];
 then
 	echo "Found existing $hostapd_conf"
 	echo "Backup location: $hostapd_conf_bak"
 	cp -f $hostapd_conf $hostapd_conf_bak
+	echo ""
 fi
 
 cat > /etc/hostapd/hostapd.conf << EOL
@@ -202,10 +203,11 @@ then
 	echo "Found existing $hostapd_def_conf"
 	echo "Backup location: $hostapd_def_conf_bak"
 	cp -f $hostapd_def_conf $hostapd_def_conf_bak
+	echo ""
 fi
 
 # help hostapd find its config
-sed -i "s/#DAEMON_CONF=\"\"/DAEMON_CONF=\"/etc/hostapd/hostapd.conf\"/g" $hostapd_def_conf
+sudo sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/default\/hostapd\"/g" /etc/default/hostapd
 
 # run hostpad + config (no need to run now?)
 # /usr/sbin/hostapd /etc/hostapd/hostapd.conf
