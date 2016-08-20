@@ -7,7 +7,7 @@
 
 root_check(){
 if (( $EUID != 0 )); then
-  echo "Must be run as root. Type in 'sudo $0' to run it as root."
+  echo -e "\nMust be run as root. Type in 'sudo $0' to run it as root.\n"
   exit 1
 fi
 }
@@ -23,11 +23,11 @@ read key
 
 configure_pkg(){
 # package list update
-echo "Updating packge list"
+echo -e "\nUpdating packge list\n"
 apt-get update -y
 
 # install needed packages
-echo "Installing deps: dnsmasq hostapd"
+echo -e "\nInstalling deps: dnsmasq hostapd\n"
 apt-get install dnsmasq hostapd
 }
 
@@ -36,7 +36,7 @@ configure_interfaces(){
 # configuring interfaces | static IP
 # should be added to the bottom of page, not overwrite whole file
 
-echo "Setting static wlan0 IP, backup location: /etc/dhcpcd.conf.org.bak"
+echo -e "\nSetting static wlan0 IP, backup location: /etc/dhcpcd.conf.org.bak\n"
 cp /etc/dhcpcd.conf /etc/dhcpcd.conf.org.bak
 cat >> /etc/dhcpcd.conf << EOL
 
@@ -45,7 +45,7 @@ interface wlan0
 EOL
 
 # configuring interfaces | disable wpa_supplicant interference
-echo "Disabling wpa_supplicant interface, backup location: /etc/network/interfaces.org.bak"
+echo -e "\nDisabling wpa_supplicant interface, backup location: /etc/network/interfaces.org.bak\n"
 cp /etc/network/interfaces /etc/network/interfaces.org.bak
 
 # match, delete next line
@@ -53,7 +53,7 @@ sed -i '/iface wlan0 inet manual/{n;N;N;N;N;d}' /etc/network/interfaces
 # match, append new line
 sed -i '/\iface wlan0 inet manual/a #    wpa-conf \/etc\/wpa_supplicant\/wpa_supplicant.conf' /etc/network/interfaces
 
-echo "restarting dhcpd"
+echo -e "\nrestarting dhcpd\n"
 service dhcpcd restart
 }
 
@@ -133,7 +133,7 @@ done
 }
 
 configure_hostapd(){
-echo -e "configuring hostapd\n"
+echo -e "\nconfiguring hostapd\n"
 
 hostapd_conf="/etc/hostapd/hostapd.conf"
 hostapd_conf_bak="/etc/hostapd/hostapd.conf.org.bak"
