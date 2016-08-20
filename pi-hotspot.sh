@@ -268,9 +268,11 @@ sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 EOL
 }
 
+dhcpd_config_update(){
 # tell dhcpcd about this config
 dhcpcd_nat=/lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
 echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
+}
 
 start_services(){
 sudo service hostapd start
@@ -286,4 +288,5 @@ settings_confirm
 configure_hostapd
 configure_ivp4
 configure_dnsmasq
+dhcpd_config_update
 start_services
