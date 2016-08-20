@@ -42,6 +42,8 @@ cat >> /etc/dhcpcd.conf << EOL
 
 interface wlan0
     static ip_address=172.24.1.1/24
+
+denyinterfaces wlan0
 EOL
 
 # configuring interfaces | disable wpa_supplicant interference
@@ -133,6 +135,11 @@ settings_confrim=${settings_confrim:-$default}
 	esac
 done
 }
+
+# ToDo
+# configure static ip
+# alter /etc/network/interfaces
+# restart dhcpcd
 
 configure_hostapd(){
 echo -e "\nConfiguring hostapd\n"
@@ -246,6 +253,7 @@ then
 	echo "Found existing $sysctl_conf"
 	echo "Backup location: $sysctl_conf_bak"
 	cp -f $sysctl_conf $sysctl_conf_bak
+	echo ""
 fi
 
 # enable ipv4 packet forwarding
