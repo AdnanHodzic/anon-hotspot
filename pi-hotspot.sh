@@ -36,7 +36,7 @@ configure_interfaces(){
 # configuring interfaces | static IP
 # should be added to the bottom of page, not overwrite whole file
 
-echo -e "\nSetting static wlan0 IP, backup location: /etc/dhcpcd.conf.org.bak\n"
+echo -e "\nSetting static wlan0 IP, backup location: /etc/dhcpcd.conf.org.bak"
 cp /etc/dhcpcd.conf /etc/dhcpcd.conf.org.bak
 cat >> /etc/dhcpcd.conf << EOL
 
@@ -45,7 +45,7 @@ interface wlan0
 EOL
 
 # configuring interfaces | disable wpa_supplicant interference
-echo -e "\nDisabling wpa_supplicant interface, backup location: /etc/network/interfaces.org.bak\n"
+echo -e "\nDisabling wpa_supplicant interface, backup location: /etc/network/interfaces.org.bak"
 cp /etc/network/interfaces /etc/network/interfaces.org.bak
 
 # match, delete next line
@@ -53,7 +53,7 @@ sed -i '/iface wlan0 inet manual/{n;N;N;N;N;d}' /etc/network/interfaces
 # match, append new line
 sed -i '/\iface wlan0 inet manual/a #    wpa-conf \/etc\/wpa_supplicant\/wpa_supplicant.conf' /etc/network/interfaces
 
-echo -e "\nrestarting dhcpd\n"
+echo -e "\nRestarting dhcpd\n"
 service dhcpcd restart
 }
 
@@ -95,7 +95,6 @@ settings_confrim=${settings_confrim:-$default}
 	case $settings_confrim in 
 
 	Y|y)
-		echo "Moving to next step"
 		break
 	;;
 	
@@ -136,7 +135,7 @@ done
 }
 
 configure_hostapd(){
-echo -e "\nconfiguring hostapd\n"
+echo -e "\nConfiguring hostapd\n"
 
 hostapd_conf="/etc/hostapd/hostapd.conf"
 hostapd_conf_bak="/etc/hostapd/hostapd.conf.org.bak"
