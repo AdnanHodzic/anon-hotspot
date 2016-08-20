@@ -80,6 +80,9 @@ echo -e "\n++++++++++++++++++++++++++++++++++++++++++++++++++\n"
 # Confirm Service Settings
 settings_confirm(){
 
+set_ssid
+set_passphrase
+
 while [ settings_confrim != "Q" ]
 do 
 clear
