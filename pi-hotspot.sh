@@ -40,10 +40,10 @@ echo -e "\nSetting static wlan0 IP, backup location: /etc/dhcpcd.conf.org.bak"
 cp /etc/dhcpcd.conf /etc/dhcpcd.conf.org.bak
 cat >> /etc/dhcpcd.conf << EOL
 
+denyinterfaces wlan0
+
 interface wlan0
     static ip_address=172.24.1.1/24
-
-denyinterfaces wlan0
 EOL
 
 # configuring interfaces | disable wpa_supplicant interference
@@ -274,10 +274,16 @@ then
 fi
 
 cat > $ipv4nat_conf << EOL
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE  
-sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT  
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT 
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 EOL
+
+# save rules
+sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+
+# apply rules on boot
+sed -i 's/.*exit 0.*/iptables-restore < \/etc\/iptables.ipv4.nat  \n&/' /etc/rc.local
 }
 
 dhcpd_config_update(){
