@@ -278,6 +278,7 @@ echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
 }
 
 start_services(){
+echo -e "\nStarting services\n"
 sudo service hostapd start
 sudo service dnsmasq start
 }
