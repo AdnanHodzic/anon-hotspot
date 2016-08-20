@@ -296,6 +296,7 @@ start_services(){
 echo -e "\nStarting services\n"
 sudo service hostapd start
 sudo service dnsmasq start
+sudo hostapd /etc/hostapd/hostapd.conf
 }
 
 # function calls
