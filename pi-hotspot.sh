@@ -62,7 +62,7 @@ source-directory /etc/network/interfaces.d
 auto lo
 iface lo inet loopback
 
-iface eth0 inet manua
+iface eth0 inet manual
 
 allow-hotplug wlan0
 iface wlan0 inet static
@@ -79,6 +79,9 @@ EOL
 
 echo -e "\nRestarting dhcpd\n"
 service dhcpcd restart
+
+# reload wlan0 configuration
+sudo ifdown wlan0; sudo ifup wlan0
 }
 
 settings(){
