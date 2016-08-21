@@ -5,11 +5,38 @@
 # Copyleft: Adnan Hodzic <adnan@hodzic.org>
 # License: GPLv3
 
+# ToDo
+# install/make changes
+# uninstall/revert changes
+
 root_check(){
 if (( $EUID != 0 )); then
   echo -e "\nMust be run as root. Type in 'sudo $0' to run it as root.\n"
   exit 1
 fi
+}
+
+# validator (debugger)
+validator(){
+ack=${ack:-$default}
+default=Y
+
+read -p "all good, continue? [Y/n] " ack
+ack=${ack:-$default}
+
+for letter in "$ack"; do
+	if [[ "$letter" == [Yy] ]];
+		then
+		    echo -e "echo moving on ...\n"
+	elif [[ "$letter" == [Nn] ]];
+	then
+		echo -e "\nAborted, bye!"
+		exit 1
+	else
+		echo -e "\nWrong value, bye"
+		exit 1
+	fi
+done
 }
 
 # Wrong key error message
@@ -239,7 +266,7 @@ then
 fi
 
 # help hostapd find its config
-sudo sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/default\/hostapd\"/g" /etc/default/hostapd
+sudo sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/hostapd\/hostapd.conf\"/g" /etc/default/hostapd
 
 # run hostpad + config (no need to run now?)
 # /usr/sbin/hostapd /etc/hostapd/hostapd.conf
@@ -268,7 +295,9 @@ dhcp-range=172.24.1.50,172.24.1.150,12h 	# Assign IP addresses between 172.24.1.
 EOL
 }
 
-configure_ivp4(){
+configure_ipv4(){
+
+echo -e "\nsetting up ipv4 forwarding\n"
 
 sysctl_conf=/etc/sysctl.conf
 sysctl_conf_bak=/etc/sysctl.conf.org.bak
@@ -298,11 +327,9 @@ then
 	cp -f $ipv4nat_conf $ipv4nat_conf_bak
 fi
 
-cat > $ipv4nat_conf << EOL
-sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
-EOL
+eval "sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+eval "sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+eval "sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
 
 # save rules
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
@@ -331,7 +358,7 @@ configure_interfaces
 settings
 settings_confirm
 configure_hostapd
-configure_ivp4
 configure_dnsmasq
-dhcpd_config_update
+configure_ipv4
+#dhcpd_config_update
 start_services
