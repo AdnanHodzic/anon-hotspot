@@ -68,9 +68,6 @@ cp /etc/dhcpcd.conf /etc/dhcpcd.conf.org.bak
 cat >> /etc/dhcpcd.conf << EOL
 
 denyinterfaces wlan0
-
-interface wlan0
-    static ip_address=172.24.1.1/24
 EOL
 
 # configuring interfaces | disable wpa_supplicant interference
