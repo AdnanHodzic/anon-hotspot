@@ -100,12 +100,6 @@ iface wlan0 inet static
 #iface wlan1 inet manual
 #    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 EOL
-
-echo -e "\nRestarting dhcpd\n"
-service dhcpcd restart
-
-# reload wlan0 configuration
-sudo ifdown wlan0; sudo ifup wlan0
 }
 
 settings(){
@@ -324,9 +318,9 @@ then
 	cp -f $ipv4nat_conf $ipv4nat_conf_bak
 fi
 
-eval "sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
-eval "sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT"
-eval "sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
+eval "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+eval "iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+eval "iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
 
 # save rules
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
@@ -341,8 +335,20 @@ dhcpcd_nat=/lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
 echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
 }
 
+restart_services(){
+echo -e "\nRestarting dhcpd"
+service dhcpcd restart
+
+echo -e "\nrealoding wlan0 configuration"
+sudo ifdown wlan0; sudo ifup wlan0
+
+echo -e "\nRestarting dnsmasq"
+sudo /etc/init.d/dnsmasq restart
+}
+
 start_services(){
 echo -e "\nStarting services\n"
+sudo /etc/init.d/dnsmasq restart
 sudo service hostapd start
 sudo service dnsmasq start
 sudo hostapd /etc/hostapd/hostapd.conf
@@ -358,4 +364,5 @@ configure_hostapd
 configure_dnsmasq
 configure_ipv4
 #dhcpd_config_update
+restart_services
 start_services
