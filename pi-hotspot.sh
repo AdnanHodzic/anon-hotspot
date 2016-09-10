@@ -326,7 +326,7 @@ eval "iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 
 # apply rules on boot
-sed -i 's/.*exit 0.*/iptables-restore < \/etc\/iptables.ipv4.nat  \n&/' /etc/rc.local
+sed -i 's/^exit 0/iptables-restore < \/etc\/iptables.ipv4.nat\n  \n&/' /etc/rc.local
 }
 
 dhcpd_config_update(){
