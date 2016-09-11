@@ -16,6 +16,54 @@ if (( $EUID != 0 )); then
 fi
 }
 
+separator(){
+sep="\n--------------------------------------------\n"
+echo -e $sep
+}
+
+# about message
+about(){
+echo -e "\n-------------- Pi Hotspot --------------\n"
+echo -e "Tool usage, i.e:"
+echo -e "pi-hotspot configure"
+}
+
+options(){
+echo -e "\navailable options:\n"
+echo -e "-configure (re/configure WiFi hotspot)"
+echo -e "-start (start WiFi hotspot)"
+echo -e "-remove (revert to original settings)"
+separator
+}
+
+# param/option check
+if [ -z "$1" ];
+then
+	about
+	options
+	exit 1
+elif [[ $1 =~ "configure" || $1 =~ "config" ]];
+then
+	echo -e "\nRunning configure functions\n"
+	exit 1
+elif [[ $1 =~ "start" ]];
+then
+	echo -e "\nRunning start functions\n"
+	exit 1
+elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
+then
+	echo -e "\nRunning remove functions\n"
+	exit 1
+else
+	separator
+	echo "Wrong/Unknown option ..."
+	options
+	exit 1
+fi
+
+echo "out of loop"
+exit 1
+
 # validator (debugger)
 validator(){
 ack=${ack:-$default}
