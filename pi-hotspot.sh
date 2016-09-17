@@ -474,6 +474,7 @@ sudo pkill hostapd
 # param/option check
 if [ -z "$1" ];
 then
+	root_check
 	about
 	options
 	exit 1
