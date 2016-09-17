@@ -45,11 +45,23 @@ then
 elif [[ $1 =~ "configure" || $1 =~ "config" ]];
 then
 	echo -e "\nRunning configure functions\n"
-	exit 1
+	root_check
+	configure_pkg
+	configure_interfaces
+	settings
+	settings_confirm
+	configure_hostapd
+	configure_dnsmasq
+	configure_ipv4
+	#dhcpd_config_update
+	restart_services
+	start_services
+	#exit 1
 elif [[ $1 =~ "start" ]];
 then
 	echo -e "\nRunning start functions\n"
-	exit 1
+	start_services
+	#exit 1
 elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
 then
 	echo -e "\nRunning remove functions\n"
@@ -400,16 +412,3 @@ sudo service hostapd start
 sudo service dnsmasq start
 sudo hostapd /etc/hostapd/hostapd.conf
 }
-
-# function calls
-root_check
-configure_pkg
-configure_interfaces
-settings
-settings_confirm
-configure_hostapd
-configure_dnsmasq
-configure_ipv4
-#dhcpd_config_update
-restart_services
-start_services
