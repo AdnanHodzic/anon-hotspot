@@ -357,13 +357,15 @@ dhcpcd_nat=/lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
 echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
 }
 
-tor_config(){
+tor_pkg(){
 # pkg install
 echo -e "Updating packge list\n"
 apt-get update -y
 echo -e "\nInstalling Tor\n"
 sudo apt-get -y install tor
+}
 
+tor_conf(){
 # tor config
 echo -e "\nConfiguring Tor settings: /etc/tor/torrc"
 cat >> /etc/tor/torrc << EOL
@@ -376,25 +378,42 @@ TransListenAddress 172.24.1.1
 DNSPort 53
 DNSListenAddress 172.24.1.1
 EOL
+}
 
+tor_net(){
 # route wlan0 traffic through tor
 echo -e "\nRouting wlan0 traffic through tor"
-eval "sudo iptables -F"
-eval "sudo iptables -t nat -F"
-eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 22 -j REDIRECT --to-ports 22"
-eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j REDIRECT --to-ports 53"
-eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports 9040"
+# flush everything
+eval "iptables -F"
+eval "iptables -t nat -F"
+# hotspot
+eval "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
+eval "iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+eval "iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
+# thru tor
+eval "iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 22 -j REDIRECT --to-ports 22"
+eval "iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j REDIRECT --to-ports 53"
+eval "iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports 9040"
+# verify
+#eval "iptables -t nat -L"
+}
 
+tor_log(){
 # setup logging
 echo -e "\nSetting up logging: /var/log/tor"
 sudo touch /var/log/tor/notices.log
 sudo chown debian-tor /var/log/tor/notices.log
 sudo chown debian-tor /var/log/tor/notices.log
+}
 
+tor_boot(){
+echo "Start at boot, still not done"
 # start at boot
 #sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 #sudo systemctl enable tor.service
+}
 
+tor_start(){
 # start tor
 echo -e "\nStarting Tor"
 sudo service tor start
@@ -406,7 +425,7 @@ restart_services(){
 echo -e "\nRestarting dhcpd"
 service dhcpcd restart
 
-echo -e "\nrealoding wlan0 configuration"
+echo -e "\nreloading wlan0 configuration"
 sudo ifdown wlan0; sudo ifup wlan0
 
 echo -e "\nRestarting dnsmasq"
@@ -459,7 +478,7 @@ then
 	exit 1
 elif [[ $1 =~ "configure" || $1 =~ "config" ]];
 then
-	echo -e "\nConfiguring WiFi Hotspot\n"
+	echo -e "\nConfiguring WiFi Hotspot"
 	root_check
 	configure_pkg
 	configure_interfaces
@@ -475,7 +494,12 @@ then
 elif [[ $1 =~ "tor" ]];
 then
 	echo -e "\nConfiguring Tor\n"
-	tor_config
+	tor_pkg
+	tor_conf
+	tor_net
+	tor_log
+	tor_boot
+	tor_start
 	start_hotspot_question
 	#exit 1
 elif [[ $1 =~ "start" ]];
