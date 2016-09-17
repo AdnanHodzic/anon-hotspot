@@ -374,11 +374,11 @@ DNSListenAddress 172.24.1.1
 EOL
 
 # route wlan0 traffic through tor
-sudo iptables -F
-sudo iptables -t nat -F
-sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 22 -j REDIRECT --to-ports 22
-sudo iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j REDIRECT --to-ports 53
-sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports 9040
+eval "sudo iptables -F"
+eval "sudo iptables -t nat -F"
+eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 22 -j REDIRECT --to-ports 22"
+eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j REDIRECT --to-ports 53"
+eval "sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports 9040"
 
 # setup logging
 sudo touch /var/log/tor/notices.log
