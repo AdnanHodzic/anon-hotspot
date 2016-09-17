@@ -355,6 +355,45 @@ dhcpcd_nat=/lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
 echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
 }
 
+tor_config(){
+# pkg install
+apt-get update -y
+sudo apt-get install tor
+
+# tor config
+cat >> /etc/tor/torrc << EOL
+Log notice file /var/log/tor/notices.log
+VirtualAddrNetwork 10.192.0.0/10
+AutomapHostsSuffixes .onion,.exit
+AutomapHostsOnResolve 1
+TransPort 9040
+TransListenAddress 172.24.1.1
+DNSPort 53
+DNSListenAddress 172.24.1.1
+EOL
+
+# route wlan0 traffic through tor
+sudo iptables -F
+sudo iptables -t nat -F
+sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 22 -j REDIRECT --to-ports 22
+sudo iptables -t nat -A PREROUTING -i wlan0 -p udp --dport 53 -j REDIRECT --to-ports 53
+sudo iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports 9040
+
+# setup logging
+sudo touch /var/log/tor/notices.log
+sudo chown debian-tor /var/log/tor/notices.log
+sudo chown debian-tor /var/log/tor/notices.log
+
+# start at boot
+#sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+#sudo systemctl enable tor.service
+
+# start tor
+sudo service tor start
+
+echo -e "\nTor successfully configured and started\n"
+}
+
 restart_services(){
 echo -e "\nRestarting dhcpd"
 service dhcpcd restart
