@@ -506,13 +506,14 @@ then
 	configure_dnsmasq
 	#configure_ipv4
 	#dhcpd_config_update
-	restart_services
+	#restart_services
 	# tor
 	tor_pkg
 	tor_conf
 	tor_net
 	tor_log
 	tor_boot
+	restart_services
 	tor_start
 	start_hotspot_question
 	#start_hotspot
