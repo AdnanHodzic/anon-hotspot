@@ -36,46 +36,6 @@ echo -e "-remove (revert to original settings)"
 separator
 }
 
-# param/option check
-if [ -z "$1" ];
-then
-	about
-	options
-	exit 1
-elif [[ $1 =~ "configure" || $1 =~ "config" ]];
-then
-	echo -e "\nRunning configure functions\n"
-	root_check
-	configure_pkg
-	configure_interfaces
-	settings
-	settings_confirm
-	configure_hostapd
-	configure_dnsmasq
-	configure_ipv4
-	#dhcpd_config_update
-	restart_services
-	start_services
-	#exit 1
-elif [[ $1 =~ "start" ]];
-then
-	echo -e "\nRunning start functions\n"
-	start_services
-	#exit 1
-elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
-then
-	echo -e "\nRunning remove functions\n"
-	exit 1
-else
-	separator
-	echo "Wrong/Unknown option ..."
-	options
-	exit 1
-fi
-
-echo "out of loop"
-exit 1
-
 # validator (debugger)
 validator(){
 ack=${ack:-$default}
@@ -412,3 +372,40 @@ sudo service hostapd start
 sudo service dnsmasq start
 sudo hostapd /etc/hostapd/hostapd.conf
 }
+
+# param/option check
+if [ -z "$1" ];
+then
+	about
+	options
+	exit 1
+elif [[ $1 =~ "configure" || $1 =~ "config" ]];
+then
+	echo -e "\nRunning configure functions\n"
+	root_check
+	configure_pkg
+	configure_interfaces
+	settings
+	settings_confirm
+	configure_hostapd
+	configure_dnsmasq
+	configure_ipv4
+	#dhcpd_config_update
+	restart_services
+	start_services
+	#exit 1
+elif [[ $1 =~ "start" ]];
+then
+	echo -e "\nRunning start functions\n"
+	start_services
+	#exit 1
+elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
+then
+	echo -e "\nRunning remove functions\n"
+	exit 1
+else
+	separator
+	echo "Wrong/Unknown option ..."
+	options
+	exit 1
+fi
