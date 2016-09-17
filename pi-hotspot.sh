@@ -30,7 +30,8 @@ echo -e "pi-hotspot configure"
 
 options(){
 echo -e "\navailable options:\n"
-echo -e "- configure (configure WiFi hotspot)"
+echo -e "- hotspot (configure WiFi hotspot)"
+echo -e "- tor-hotspot (Tor WiFi hotspot)"
 echo -e "- tor (configure Tor)"
 echo -e "- start (start WiFi hotspot)"
 echo -e "- stop (stop WiFi hotspot)"
@@ -476,7 +477,7 @@ then
 	about
 	options
 	exit 1
-elif [[ $1 =~ "configure" || $1 =~ "config" ]];
+elif [[ $1 == "hotspot" || $1 =~ "config" ]];
 then
 	echo -e "\nConfiguring WiFi Hotspot"
 	root_check
@@ -489,6 +490,31 @@ then
 	configure_ipv4
 	#dhcpd_config_update
 	restart_services
+	#start_hotspot
+	start_hotspot_question
+	#exit 1
+elif [[ $1 == "tor-hotspot" || $1 =~ "torhotspot" ]];
+then
+	echo -e "\nConfiguring Tor WiFi Hotspot"
+	root_check
+	# hotspot
+	configure_pkg
+	configure_interfaces
+	settings
+	settings_confirm
+	configure_hostapd
+	configure_dnsmasq
+	#configure_ipv4
+	#dhcpd_config_update
+	restart_services
+	# tor
+	tor_pkg
+	tor_conf
+	tor_net
+	tor_log
+	tor_boot
+	tor_start
+	start_hotspot_question
 	#start_hotspot
 	#exit 1
 elif [[ $1 =~ "tor" ]];
