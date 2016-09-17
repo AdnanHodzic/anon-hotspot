@@ -31,6 +31,7 @@ echo -e "pi-hotspot configure"
 options(){
 echo -e "\navailable options:\n"
 echo -e "-configure (re/configure WiFi hotspot)"
+echo -e "-tor (configure and start Tor)"
 echo -e "-start (start WiFi hotspot)"
 echo -e "-remove (revert to original settings)"
 separator
@@ -432,6 +433,11 @@ then
 	#dhcpd_config_update
 	restart_services
 	start_services
+	#exit 1
+elif [[ $1 =~ "tor" ]];
+then
+	echo -e "\nConfiguring Tor\n"
+	tor_config
 	#exit 1
 elif [[ $1 =~ "start" ]];
 then
