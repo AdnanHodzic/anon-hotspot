@@ -280,7 +280,7 @@ then
 fi
 
 # help hostapd find its config
-sudo sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/hostapd\/hostapd.conf\"/g" /etc/default/hostapd
+sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/hostapd\/hostapd.conf\"/g" /etc/default/hostapd
 
 # run hostpad + config (no need to run now?)
 # /usr/sbin/hostapd /etc/hostapd/hostapd.conf
@@ -325,9 +325,9 @@ then
 fi
 
 # enable ipv4 packet forwarding
-sudo sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" $sysctl_conf
+sed -i "s/#net.ipv4.ip_forward/net.ipv4.ip_forward/g" $sysctl_conf
 # immediately apply settings
-sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
 
 # NAT between wlan0 and eth0
 
@@ -346,7 +346,7 @@ eval "iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED 
 eval "iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT"
 
 # save rules
-sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+sh -c "iptables-save > /etc/iptables.ipv4.nat"
 
 # apply rules on boot
 sed -i 's/^exit 0/iptables-restore < \/etc\/iptables.ipv4.nat\n  \n&/' /etc/rc.local
@@ -363,7 +363,7 @@ tor_pkg(){
 echo -e "Updating packge list\n"
 apt-get update -y
 echo -e "\nInstalling Tor\n"
-sudo apt-get -y install tor
+apt-get -y install tor
 }
 
 tor_conf(){
@@ -402,23 +402,23 @@ eval "iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports
 tor_log(){
 # setup logging
 echo -e "\nSetting up logging: /var/log/tor"
-sudo touch /var/log/tor/notices.log
-sudo chown debian-tor /var/log/tor/notices.log
-sudo chown debian-tor /var/log/tor/notices.log
+touch /var/log/tor/notices.log
+chown debian-tor /var/log/tor/notices.log
+chown debian-tor /var/log/tor/notices.log
 }
 
 tor_boot(){
 echo "Start at boot, still not done"
 # start at boot
-#sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-#sudo systemctl enable tor.service
+#sh -c "iptables-save > /etc/iptables.ipv4.nat"
+#systemctl enable tor.service
 }
 
 tor_start(){
 # start tor
 echo -e "\nStarting Tor"
-sudo service tor stop
-sudo service tor start
+service tor stop
+service tor start
 echo -e "\nTor successfully configured and started\n"
 }
 
@@ -427,17 +427,17 @@ echo -e "\nRestarting dhcpd"
 service dhcpcd restart
 
 echo -e "\nreloading wlan0 configuration"
-sudo ifdown wlan0; sudo ifup wlan0
+ifdown wlan0; ifup wlan0
 
 echo -e "\nRestarting dnsmasq"
-sudo /etc/init.d/dnsmasq restart
+/etc/init.d/dnsmasq restart
 }
 
 start_hotspot(){
 echo -e "\nStarting Wifi Hotspot\n"
-sudo service hostapd start
-sudo service dnsmasq start
-sudo hostapd /etc/hostapd/hostapd.conf &
+service hostapd start
+service dnsmasq start
+hostapd /etc/hostapd/hostapd.conf &
 echo -e "[ctrl + c] to move process to background"
 }
 
@@ -466,9 +466,9 @@ done
 
 stop_hotspot(){
 echo -e "\nStopping Wifi Hotspot\n"
-sudo service hostapd stop
-sudo service dnsmasq stop
-sudo pkill hostapd
+service hostapd stop
+service dnsmasq stop
+pkill hostapd
 }
 
 # param/option check
