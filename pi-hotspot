@@ -57,6 +57,7 @@ for letter in "$ack"; do
 		exit 1
 	else
 		wrong_key
+		validator
 	fi
 done
 }
@@ -65,7 +66,7 @@ done
 wrong_key(){
 echo -e "\n-----------------------------"
 echo -e "\nWrong value. Concentrate!\n"
-echo -e "----------------------------\n"
+echo -e "-----------------------------\n"
 echo -e "Enter any key to continue"
 read key
 }
@@ -184,11 +185,13 @@ settings_confrim=${settings_confrim:-$default}
 				settings_show
 			else
 				wrong_key
+				settings_confirm
 			fi
 	done
 	;;
 	*) 
 		wrong_key
+		settings_confirm
 	;;
 	esac
 done
@@ -474,6 +477,7 @@ for letter in "$ack"; do
 		exit 0
 	else
 		wrong_key
+		start_hotspot_question
 	fi
 done
 }
