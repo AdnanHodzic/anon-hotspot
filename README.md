@@ -12,7 +12,7 @@ You need two things:
 
 While this tool was made and tested on [Raspbian (jessie)](https://www.raspberrypi.org/downloads/raspbian/) on RPI3. It'll work on any other Debian Linux based device. So, if you don't have RPI3 laying around, but have an old computer which you'd like to turn into Tor Hotspot be my guest. If you run into problems, please [create an issue.](https://github.com/AdnanHodzic/anon-hotspot/issues)
 
-Since this tool is still being developed, it's recommended you run it on freshly installed Raspbian (>= Jessie).
+Since this tool is still under development, it's recommended you run it on freshly installed Raspbian (>= Jessie) and not on your prod environments. 
 
 ### anon-hotspot
 
