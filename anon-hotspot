@@ -490,6 +490,7 @@ done
 stop_hotspot(){
 separator
 echo -e "\nStopping Wifi Hotspot\n"
+service tor stop
 service hostapd stop
 service dnsmasq stop
 pkill hostapd
@@ -563,6 +564,10 @@ then
 	configure_dnsmasq
 	restart_services
 	start_hotspot_question
+elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
+then
+	echo -e "\nRemoving Tor/Wifi Hotspot & revert to original settings"
+	stop_hotspot
 elif [[ $1 =~ "start" ]];
 then
 	start_hotspot
@@ -571,10 +576,6 @@ elif [[ $1 =~ "stop" ]];
 then
 	stop_hotspot
 	#exit 1
-elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
-then
-	echo -e "\nRunning remove functions"
-	exit 1
 else
 	separator
 	echo "Wrong/Unknown option ..."
