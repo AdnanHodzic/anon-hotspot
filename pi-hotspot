@@ -23,19 +23,24 @@ echo -e $sep
 
 # about message
 about(){
-echo -e "\n-------------- Pi Hotspot --------------\n"
+echo -e "\n---------- anon-hotspot: Debian Linux (Tor) Hotspot --------------\n"
 echo -e "Tool usage, i.e:"
-echo -e "pi-hotspot configure"
+echo -e "anon-hotspot tor-hotspot"
+echo -e "\n----"
 }
 
 options(){
-echo -e "\navailable options:\n"
+echo -e "\navailable options:"
+echo -e "\nconfiguration:"
+echo -e "- tor-hotspot (configure Tor WiFi hotspot)"
 echo -e "- hotspot (configure WiFi hotspot)"
-echo -e "- tor-hotspot (Tor WiFi hotspot)"
-echo -e "- tor (configure Tor)"
-echo -e "- start (start WiFi hotspot)"
-echo -e "- stop (stop WiFi hotspot)"
-echo -e "- remove (revert to original settings)"
+echo -e "- tor (configure Tor for existing Wifi hotspot)"
+echo -e "- cred (change Tor/WiFi Hotspot ssid/passphrase)"
+echo -e "- remove (remove Tor/Wifi Hotspot & revert to original settings)"
+
+echo -e "\noperations:"
+echo -e "- start (start Tor/WiFi hotspot)"
+echo -e "- stop (stop Tor/WiFi hotspot)"
 separator
 }
 
