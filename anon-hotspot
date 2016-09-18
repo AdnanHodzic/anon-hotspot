@@ -138,7 +138,7 @@ separator
 
 set_ssid(){
 echo ""
-read -p "Specify \"SSID\": " -i "Pi Wifi" -e pissid
+read -p "Specify \"SSID\": " -i "Anon Wifi" -e pissid
 }
 
 set_passphrase(){
