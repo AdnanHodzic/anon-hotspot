@@ -17,7 +17,7 @@ fi
 }
 
 separator(){
-sep="\n--------------------------------------------\n"
+sep="\n-----------------------------------------------------------------"
 echo -e $sep
 }
 
@@ -71,6 +71,8 @@ read key
 }
 
 configure_pkg(){
+separator
+
 # package list update
 echo -e "\nUpdating packge list\n"
 apt-get update -y
@@ -81,6 +83,7 @@ apt-get -y install dnsmasq hostapd
 }
 
 configure_interfaces(){
+separator
 
 # configuring interfaces | static IP
 # should be added to the bottom of page, not overwrite whole file
@@ -125,8 +128,10 @@ EOL
 }
 
 settings(){
+separator
 
 set_ssid(){
+echo ""
 read -p "Specify \"SSID\": " -i "Pi Wifi" -e pissid
 }
 
@@ -195,14 +200,15 @@ done
 # restart dhcpcd
 
 configure_hostapd(){
-echo -e "\nConfiguring hostapd\n"
+separator
+echo -e "\nConfiguring WiFi Hotspot\n"
 
 hostapd_conf="/etc/hostapd/hostapd.conf"
 hostapd_conf_bak="/etc/hostapd/hostapd.conf.org.bak"
 
 if [ -f $hostapd_conf ];
 then
-	echo "Found existing $hostapd_conf"
+	echo "Found existing: $hostapd_conf"
 	echo "Backup location: $hostapd_conf_bak"
 	cp -f $hostapd_conf $hostapd_conf_bak
 	echo ""
@@ -274,6 +280,9 @@ sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/hostapd\/hostapd.conf\"/g" /etc
 }
 
 configure_dnsmasq(){
+separator
+echo -e "\nConfiguring DNS forwarder and DHCP server\n"
+
 dnsmasq_conf=/etc/dnsmasq.conf
 dnsmasq_conf_bak=/etc/dnsmasq.conf.org.bak
 
@@ -296,6 +305,7 @@ EOL
 }
 
 configure_ipv4(){
+separator
 
 echo -e "\nsetting up ipv4 forwarding\n"
 
@@ -304,7 +314,7 @@ sysctl_conf_bak=/etc/sysctl.conf.org.bak
 
 if [ -f $sysctl_conf ];
 then
-	echo "Found existing $sysctl_conf"
+	echo "Found existing: $sysctl_conf"
 	echo "Backup location: $sysctl_conf_bak"
 	cp -f $sysctl_conf $sysctl_conf_bak
 	echo ""
@@ -322,7 +332,7 @@ ipv4nat_conf_bak="/etc/iptables.ipv4.nat.org.bak"
 
 if [ -f $ipv4nat_conf ];
 then
-	echo "Found existing $ipv4nat_conf"
+	echo "Found existing: $ipv4nat_conf"
 	echo "Backup location: $ipv4nat_conf_bak"
 	cp -f $ipv4nat_conf $ipv4nat_conf_bak
 fi
@@ -346,7 +356,9 @@ echo "iptables-restore < /etc/iptables.ipv4.nat" > $dhcpcd_nat
 
 tor_pkg(){
 # pkg install
-echo -e "Updating packge list\n"
+separator
+
+echo -e "\nUpdating packge list\n"
 apt-get update -y
 echo -e "\nInstalling Tor\n"
 apt-get -y install tor
@@ -354,7 +366,9 @@ apt-get -y install tor
 
 tor_conf(){
 # tor config
+separator
 echo -e "\nConfiguring Tor settings: /etc/tor/torrc"
+
 cat >> /etc/tor/torrc << EOL
 Log notice file /var/log/tor/notices.log
 VirtualAddrNetwork 10.192.0.0/10
@@ -369,7 +383,9 @@ EOL
 
 tor_net(){
 # route wlan0 traffic through tor
+separator
 echo -e "\nRouting wlan0 traffic through tor"
+
 # flush everything
 eval "iptables -F"
 eval "iptables -t nat -F"
@@ -387,14 +403,18 @@ eval "iptables -t nat -A PREROUTING -i wlan0 -p tcp --syn -j REDIRECT --to-ports
 
 tor_log(){
 # setup logging
+separator
 echo -e "\nSetting up logging: /var/log/tor"
+
 touch /var/log/tor/notices.log
 chown debian-tor /var/log/tor/notices.log
 chown debian-tor /var/log/tor/notices.log
 }
 
 tor_boot(){
-echo "Start at boot, still not done"
+separator
+echo -e "\nStart at boot, still not done"
+
 # start at boot
 #sh -c "iptables-save > /etc/iptables.ipv4.nat"
 #systemctl enable tor.service
@@ -402,13 +422,17 @@ echo "Start at boot, still not done"
 
 tor_start(){
 # start tor
+separator
+
 echo -e "\nStarting Tor"
 service tor stop
 service tor start
-echo -e "\nTor successfully configured and started\n"
+echo -e "\nTor successfully configured and started"
 }
 
 restart_services(){
+separator
+
 echo -e "\nRestarting dhcpd"
 service dhcpcd restart
 
@@ -420,17 +444,22 @@ echo -e "\nRestarting dnsmasq"
 }
 
 start_hotspot(){
+separator
 echo -e "\nStarting Wifi Hotspot\n"
+
 service hostapd start
 service dnsmasq start
 hostapd /etc/hostapd/hostapd.conf &
-echo -e "[ctrl + c] to move process to background"
+echo -e "[ctrl + c] to move process to background\n"
 }
 
 start_hotspot_question(){
+separator
+
 ack=${ack:-$default}
 default=Y
 
+echo ""
 read -p "Start WiFi Hotspot? [Y/n] " ack
 ack=${ack:-$default}
 
@@ -450,6 +479,7 @@ done
 }
 
 stop_hotspot(){
+separator
 echo -e "\nStopping Wifi Hotspot\n"
 service hostapd stop
 service dnsmasq stop
@@ -506,7 +536,7 @@ then
 	#exit 1
 elif [[ $1 =~ "tor" ]];
 then
-	echo -e "\nConfiguring Tor\n"
+	echo -e "\nConfiguring Tor"
 	tor_pkg
 	tor_conf
 	tor_net
@@ -525,7 +555,7 @@ then
 	#exit 1
 elif [[ $1 =~ "remove" || $1 =~ "uninstall" ]];
 then
-	echo -e "\nRunning remove functions\n"
+	echo -e "\nRunning remove functions"
 	exit 1
 else
 	separator
