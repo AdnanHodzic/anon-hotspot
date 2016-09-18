@@ -56,8 +56,7 @@ for letter in "$ack"; do
 		echo -e "\nAborted, bye!"
 		exit 1
 	else
-		echo -e "\nWrong value, bye"
-		exit 1
+		wrong_key
 	fi
 done
 }
@@ -159,45 +158,33 @@ settings_show
 default=Y
 read -p "Are these settings correct [Y/n]? " settings_confrim
 settings_confrim=${settings_confrim:-$default}
-	
 	case $settings_confrim in 
-
 	Y|y)
 		break
-	;;
-	
-	N|n)
+	;;	N|n)
 		settings_show
-
 		echo -e "What would you like to edit?\n"
 		echo "[1] WiFi SSID"
 		echo "[2] WPA Passphrase"
 	
 	read -p "Enter option number: " settings_edit
-
 	for letter in "$settings_edit"; do
-
-	if [[ "$letter" == [1] ]]; 
-	then
-		set_ssid
-		settings_show
-
-	elif [[ "$letter" == [2] ]]; 
-	then
-		set_passphrase
-		settings_show
-
-	else
-		wrong_key
-
-	fi
+			if [[ "$letter" == [1] ]]; 
+			then
+				set_ssid
+				settings_show
+			elif [[ "$letter" == [2] ]]; 
+			then
+				set_passphrase
+				settings_show
+			else
+				wrong_key
+			fi
 	done
 	;;
-
 	*) 
-	wrong_key
+		wrong_key
 	;;
-	
 	esac
 done
 }
@@ -284,7 +271,6 @@ sed -i "s/#DAEMON_OPTS=\"\"/DAEMON_OPTS=\"\/etc\/hostapd\/hostapd.conf\"/g" /etc
 
 # run hostpad + config (no need to run now?)
 # /usr/sbin/hostapd /etc/hostapd/hostapd.conf
-
 }
 
 configure_dnsmasq(){
@@ -458,8 +444,7 @@ for letter in "$ack"; do
 	echo -e "\nDidn't start Wifi Hotspot"
 		exit 0
 	else
-		echo -e "\nWrong value, didn't start Wifi Hotspot"
-		exit 1
+		wrong_key
 	fi
 done
 }
