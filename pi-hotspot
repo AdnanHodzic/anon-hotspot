@@ -17,20 +17,20 @@ fi
 }
 
 separator(){
-sep="\n-----------------------------------------------------------------"
+sep="\n-------------------------------------------------------------------"
 echo -e $sep
 }
 
 # about message
 about(){
-echo -e "\n---------- anon-hotspot: Debian Linux (Tor) Hotspot --------------\n"
+echo -e "\n----------- anon-hotspot: Debian Linux (Tor) Hotspot ---------------\n"
 echo -e "Tool usage, i.e:"
 echo -e "anon-hotspot tor-hotspot"
 echo -e "\n----"
 }
 
 options(){
-echo -e "\navailable options:"
+echo -e "\navailable options"
 echo -e "\nconfiguration:"
 echo -e "- tor-hotspot (configure Tor WiFi hotspot)"
 echo -e "- hotspot (configure WiFi hotspot)"
@@ -545,7 +545,7 @@ then
 	#exit 1
 elif [[ $1 =~ "tor" ]];
 then
-	echo -e "\nConfiguring Tor"
+	echo -e "\nConfiguring Tor for existing Wifi hotspot"
 	tor_pkg
 	tor_conf
 	tor_net
@@ -554,6 +554,15 @@ then
 	tor_start
 	start_hotspot_question
 	#exit 1
+elif [[ $1 =~ "cred" ]];
+then
+	echo -e "\nChanging Tor/WiFi Hotspot ssid/passphrase"
+	settings
+	settings_confirm
+	configure_hostapd
+	configure_dnsmasq
+	restart_services
+	start_hotspot_question
 elif [[ $1 =~ "start" ]];
 then
 	start_hotspot
