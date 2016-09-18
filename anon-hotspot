@@ -1,13 +1,11 @@
 #!/bin/bash
 #
-# pi-hotspot: Tool which turns Raspberry Pi 3 into a WiFi Hotspot
+# anon-hotspot: On demand Debian Linux (Tor) Hotspot setup tool
+#
+# Blog post: http://foolcontrol.org/?p=1853
 #
 # Copyleft: Adnan Hodzic <adnan@hodzic.org>
 # License: GPLv3
-
-# ToDo
-# install/make changes
-# uninstall/revert changes
 
 root_check(){
 if (( $EUID != 0 )); then
@@ -138,7 +136,7 @@ separator
 
 set_ssid(){
 echo ""
-read -p "Specify \"SSID\": " -i "Anon Wifi" -e pissid
+read -p "Specify \"SSID\": " -i "Anon Hotspot" -e pissid
 }
 
 set_passphrase(){
