@@ -43,6 +43,7 @@ __operations__
 * Debian: >= Jessie 8.0
 * Ubuntu: >= 15.04
 * Elementary OS: >= Loki
+* Kali Linux: >= 2.0
 
 ### Discussion
 Blog post: [anon-hotspot: On demand Debian Linux (Tor) Hotspot setup tool](http://foolcontrol.org/?p=1853)
