@@ -13,12 +13,13 @@ import sys
 from sys import argv
 
 sep = "-" * 15
-min_sep = "-" * 3
+min_sep = "-" * 4
 nothing = "\nNothing here yet ¯\_(ツ)_/¯\n"
 
 def root_check():
     if not os.geteuid() == 0:
         sys.exit(f"Must be run as root, i.e: \"sudo {script}\" to run as root.")
+        exit(1)
 
 def tor_hotspot():
     print(nothing)
@@ -55,13 +56,14 @@ def ops_stop():
     os.system("pkill hostapd")
 
 def ops_wrong(reason):
-    print(f"\n{min_sep} Error! {min_sep}\n{reason} | Aborting ...\n")
-    exit(0)
+    print(f"\n{min_sep} Error! {min_sep}\n{reason} | Try again ...")
 
 def start():
+    # about
     print(sep, "anon-hotspot: Debian Linux (Tor) Hotspot " + sep)
     print("\nTool usage, i.e:")
     print("anon-hotspot tor-hotspot")
+    # available options
     print("\n" + min_sep + " available options " + min_sep + "\n")
     print("configuration:")
     print("- tor-hotspot (configure Tor WiFi hotspot)")
@@ -69,25 +71,32 @@ def start():
     print("- tor (configure Tor for existing Wifi hotspot)")
     print("- cred (change Tor/WiFi Hotspot ssid/passphrase)")
     print("- remove (remove Tor/Wifi Hotspot & revert to original settings)")
-
+    # available ops
     print("\noperations:")
     print("- start (start Tor/WiFi hotspot)")
     print("- stop (stop Tor/WiFi hotspot)")
-    choice = input(f"{script}: ")
 
-    if choice == "tor-hotspot":
-        tor_hotspot()
-    elif choice == "hotspot":
-        hotspot()
-    elif choice == "tor":
-        tor()
-    elif choice == "cred":
-        cred()
-    elif choice == "remove":
-        remove()
-    else:
-        # ToDo: return wrong value and let user try again
-        ops_wrong("\n\"" + choice + "\" is an unknown option")
+    while True:
+        choice = input(f"\n{script}: ")
+        if choice not in ('tor-hotspot', 'hotspot', 'tor', 'cred', 'remove', 'start', 'stop'):
+            ops_wrong("\n\"" + choice + "\" is an unknown option")
+        elif choice == "tor-hotspot":
+            tor_hotspot()
+        elif choice == "hotspot":
+            hotspot()
+        elif choice == "tor":
+            tor()
+        elif choice == "cred":
+            cred()
+        elif choice == "remove":
+            remove()
+        elif choice == "start":
+            ops_start()
+        elif choice == "stop":
+            ops_stop()
+        else:
+            ops_wrong("\n\"" + choice + "\" is an invalid input")
+            exit(1)
 
 script = argv
 root_check()
