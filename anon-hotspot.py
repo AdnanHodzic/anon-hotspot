@@ -12,21 +12,36 @@ import os
 import sys
 from sys import argv
 
+# global vars
 sep = "-" * 15
 min_sep = "-" * 4
 nothing = "\nNothing here yet ¯\_(ツ)_/¯\n"
 
+# root check func
 def root_check():
     if not os.geteuid() == 0:
         sys.exit(f"Must be run as root, i.e: \"sudo {script}\" to run as root.")
         exit(1)
+
+# package install func
+def pkg_install(pkg):
+    os.system("apt-get update -y")
+    os.system("apt-get install -y " + pkg)
+
+# def configure_interface:
+#    print(min_sep + "Configuring Interfaces" + min_sep)
 
 def tor_hotspot():
     print(nothing)
     exit(0)
 
 def hotspot():
-    print(nothing)
+    print("\n" + min_sep + " Configuring WiFi Hotspot " + min_sep + "\n")
+    # useless comment?
+    print("Installing deps: dnsmasq hostapd\n")
+    pkg_install("dnsmasq")
+    pkg_install("hostapd")
+    #configure_interface
     exit(0)
 
 def tor():
@@ -41,6 +56,7 @@ def remove():
     print(nothing)
     exit(0)
 
+# operations start func
 def ops_start():
     print("\nStarting Wifi Hotspot\n")
     os.system("service hostapd start")
@@ -48,6 +64,7 @@ def ops_start():
     os.system("hostapd /etc/hostapd/hostapd.conf &")
     print("[ctrl + c] to move process to background\n")
 
+# operations stop func
 def ops_stop():
     print("\nStopping Wifi Hotspot\n")
     os.system("service tor stop")
@@ -55,9 +72,11 @@ def ops_stop():
     os.system("service dnsmasq stop")
     os.system("pkill hostapd")
 
-def ops_wrong(reason):
+# wrong value func
+def wrong_value(reason):
     print(f"\n{min_sep} Error! {min_sep}\n{reason} | Try again ...")
 
+# anon-hotspot start
 def start():
     # about
     print(sep, "anon-hotspot: Debian Linux (Tor) Hotspot " + sep)
@@ -76,10 +95,11 @@ def start():
     print("- start (start Tor/WiFi hotspot)")
     print("- stop (stop Tor/WiFi hotspot)")
 
+    # available options and operations menu
     while True:
         choice = input(f"\n{script}: ")
         if choice not in ('tor-hotspot', 'hotspot', 'tor', 'cred', 'remove', 'start', 'stop'):
-            ops_wrong("\n\"" + choice + "\" is an unknown option")
+            wrong_value("\n\"" + choice + "\" is an unknown option")
         elif choice == "tor-hotspot":
             tor_hotspot()
         elif choice == "hotspot":
@@ -95,9 +115,10 @@ def start():
         elif choice == "stop":
             ops_stop()
         else:
-            ops_wrong("\n\"" + choice + "\" is an invalid input")
+            wrong_value("\n\"" + choice + "\" is an invalid input")
             exit(1)
 
+# functions call
 script = argv
 root_check()
 start()
