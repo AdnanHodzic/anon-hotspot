@@ -10,6 +10,7 @@
 
 import os
 import sys
+import shutil
 from sys import argv
 
 # global vars
@@ -27,6 +28,33 @@ def root_check():
 def pkg_install(pkg):
     os.system("apt-get update -y")
     os.system("apt-get install -y " + pkg)
+
+# same func used for for both tor-hotspot() and hotspot()
+def configue_interfaces():
+    dhcpcd_conf = "/etc/dhcpcd.conf"
+    dhcpcd_conf_bak = "/etc/dhcpcd.conf.org.bak"
+
+    print("\nSetting static wlan0 IP, backup location: " + dhcpcd_conf_bak)
+    shutil.copy(dhcpcd_conf, dhcpcd_conf_bak)
+
+    # instruct dhcpd to ignore wlan0
+    find_line = "# anon-hotspot"
+    append_line = "denyinterfaces wlan0"
+    conf_file = dhcpcd_conf
+    with open(conf_file, "r+") as file:
+        for line in file:
+            if find_line in line:
+                break
+        else:
+            file.write("\n" + find_line)
+            file.write("\n" + append_line)
+
+    interfaces_conf = "/etc/network/interfaces"
+    interfaces_conf_bak ="/etc/network/interfaces.org.bak"
+
+    # configure interfaces (set static IP) & disable wpa_supplicant interference
+    print("\nGenerating new interface file, backup location: " + interfaces_conf_bak)
+    shutil.copy(interfaces_conf, interfaces_conf_bak)
 
 def configure_tor_settings(target_file):
     print(min_sep + " Configuring Tor settings: " + target_file + " " + min_sep)
@@ -52,6 +80,8 @@ def configure_tor_settings(target_file):
             file.write(config_add.replace('    ', ''))
 
 def tor_hotspot():
+    pkg_install("tor")
+    configue_interfaces()
     configure_tor_settings("/etc/tor/torrc")
     #print(nothing)
     exit(0)
