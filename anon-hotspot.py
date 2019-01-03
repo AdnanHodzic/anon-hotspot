@@ -28,11 +28,32 @@ def pkg_install(pkg):
     os.system("apt-get update -y")
     os.system("apt-get install -y " + pkg)
 
-# def configure_interface:
-#    print(min_sep + "Configuring Interfaces" + min_sep)
+def configure_tor_settings(target_file):
+    print(min_sep + " Configuring Tor settings: " + target_file + " " + min_sep)
+    conf_file = target_file
+    find_line = "# anon-hotspot"
+    config_add = """
+    Log notice file /var/log/tor/notices.log
+    VirtualAddrNetwork 10.192.0.0/10
+    AutomapHostsSuffixes .onion,.exit
+    AutomapHostsOnResolve 1
+    TransPort 9040
+    TransListenAddress 172.24.1.1
+    DNSPort 53
+    DNSListenAddress 172.24.1.1
+    """
+
+    with open(conf_file, "r+") as file:
+        for line in file:
+            if find_line in line:
+                break
+        else:
+            file.write("\n" + find_line)
+            file.write(config_add.replace('    ', ''))
 
 def tor_hotspot():
-    print(nothing)
+    configure_tor_settings("/etc/tor/torrc")
+    #print(nothing)
     exit(0)
 
 def hotspot():
@@ -120,5 +141,5 @@ def start():
 
 # functions call
 script = argv
-root_check()
+#root_check()
 start()
