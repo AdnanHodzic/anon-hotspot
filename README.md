@@ -47,3 +47,15 @@ __operations__
 
 ### Discussion
 Blog post: [anon-hotspot: On demand Debian Linux (Tor) Hotspot setup tool](http://foolcontrol.org/?p=1853)
+
+### Donate
+
+Since I'm working on this project in free time, please consider supporting this project by making a donation of any amount!
+
+##### PayPal
+[![paypal](https://www.paypalobjects.com/en_US/NL/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=7AHCP5PU95S4Y&item_name=Contribution+for+work+on+anon-hotspot&currency_code=EUR&source=url)
+
+##### BitCoin
+[bc1qlncmgdjyqy8pe4gad4k2s6xtyr8f2r3ehrnl87](bitcoin:bc1qlncmgdjyqy8pe4gad4k2s6xtyr8f2r3ehrnl87)
+
+[![bitcoin](https://foolcontrol.org/wp-content/uploads/2019/08/btc-donate-displaylink-debian.png)](bitcoin:bc1qlncmgdjyqy8pe4gad4k2s6xtyr8f2r3ehrnl87)
