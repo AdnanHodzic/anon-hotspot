@@ -20,7 +20,7 @@ Just run it! i.e:
 
 `sudo ./anon-hotspot`
 
-![anon-hotspot welcome screen](http://foolcontrol.org/wp-content/uploads/2016/09/anon-hotspot.png)
+![anon-hotspot](https://github.com/user-attachments/assets/a376aa9a-c7e2-464a-be77-77de8759f7cb)
 
 ### Features:
 
